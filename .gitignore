@@ -1,0 +1,33 @@
+# Compiled object files
+*.o
+
+# Executables
+*.out
+*.exe
+a.out
+
+# Build directories
+build/
+bin/
+
+# Core dumps / crash dumps
+core
+*.core
+vgcore.*
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VSCode
+.vscode/
+
+# Debugger files
+*.dSYM
