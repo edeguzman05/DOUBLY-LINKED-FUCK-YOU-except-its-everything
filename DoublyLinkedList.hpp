@@ -129,7 +129,11 @@ namespace CPSC131::DoublyLinkedList
                     /// Get a pointer to the head node, or end() if this list is empty
                     Node* begin()
                     {                      
-                        return head_;
+                        if (head_ == nullptr) {
+							return nullptr;
+						} else {
+							return this->head_;
+						}
                     }
                    
                     /// Get a node pointer representing "end" (aka "depleted"). Probably want to just use nullptr.
@@ -157,31 +161,25 @@ namespace CPSC131::DoublyLinkedList
                      */
                     Iterator& operator=(const Iterator& other)
                     {
-                        this->head_ = other.head_;
-                    	this->tail_ = other.tail_;
-                    	this->cursor_ = other.cursor_;
+                        if (this != &other) {
+                            this->head_ = other.head_;
+                    	    this->tail_ = other.tail_;
+                    	    this->cursor_ = other.cursor_;
+                        }
                     	return *this;
                     }
                    
                     /// Comparison operator
                     bool operator==(const Iterator& other)
                     {
-                        if(this->cursor_ == other.cursor_) {
-                        	return true;
-                    	} else {
-                    		return false;
-                    	}
+                        return (this->cursor_ == other.cursor_);
 
                     }
                     /// Inequality comparison operator
                     bool operator!=(const Iterator& other)
                     {
-                        if (cursor_ != other.cursor_) {
-                        	return true;
-                        } else {
-                        	return false;
-		    	}
-		    }
+                       return (cursor_ != other.cursor_);
+		    	    }
 						
                    
                     /**
@@ -202,7 +200,7 @@ namespace CPSC131::DoublyLinkedList
                     Iterator operator -(size_t subtract)
                     {
                        Iterator tempIte = *this;
-                    	for (size_t i = 0; i < subtract && cursor_ != nullptr; i++) {
+                    	for (size_t i = 0; i < subtract && tempIte.cursor_ != nullptr; i++) {
                             	tempIte.cursor_ = tempIte.cursor_->getPrev();    
                     	}
                     	return tempIte;
@@ -217,7 +215,9 @@ namespace CPSC131::DoublyLinkedList
                     {
                         if (cursor_ != nullptr) {
                         	cursor_ = cursor_->getNext();
-                    	}
+                    	} else {
+							this->cursor_ = tail_;
+						}
                     	return *this;
 
                     }
@@ -230,9 +230,7 @@ namespace CPSC131::DoublyLinkedList
                     {
                     	
                     	Iterator Iverson = *this;
-                    	if (cursor_ != nullptr) {
-                        	cursor_ = cursor_->getNext();
-                    	}
+                    	++(*this);
                     	return Iverson;
                     }
                    
@@ -242,10 +240,12 @@ namespace CPSC131::DoublyLinkedList
                      */
                     Iterator& operator--()
                     {                     
-                        if (cursor_ != nullptr) {
-                        cursor_ = cursor_->getPrev();
-                    	}
-                    	return *this;
+                      if (this->cursor_ == nullptr) {
+							this->cursor_ = tail_;
+						} else {
+							this->cursor_ = this->cursor_->getPrev();
+						}
+						return *this;
                     }
 
                    
@@ -256,9 +256,7 @@ namespace CPSC131::DoublyLinkedList
                     Iterator operator--(int)
                     {
                         Iterator Rose = *this;
-                    	if (cursor_ != nullptr) {
-                        	cursor_ = cursor_->getPrev();
-                    	}
+                    	--(*this);
                     	return Rose;
                     }
                    
@@ -268,8 +266,8 @@ namespace CPSC131::DoublyLinkedList
                     */
                     Iterator operator +=(size_t add)
                     {
-                        for (size_t i = 0; i < add && cursor_ != nullptr; i++) {
-                            	cursor_ = cursor_->getNext();    
+                        for (size_t i = 0; i < add && cursor_ != nullptr; ++i) {
+                            	++(*this);   
                     	}
                     	return *this;
 
@@ -281,7 +279,7 @@ namespace CPSC131::DoublyLinkedList
                     Iterator operator -=(size_t subtract)
                     {
                         for (size_t i = 0; i < subtract && cursor_ != nullptr; i++) {
-                            	cursor_ = cursor_->getPrev();    
+                            	--(*this);
                     	}
                     	return *this;
                     }
@@ -291,16 +289,15 @@ namespace CPSC131::DoublyLinkedList
                      */
                     Iterator operator +=(int add)
                     {
-                    	// If add is positive, it is supposed to increment
-                         for (int i = 0; i < add && cursor_ != nullptr; i++) {
-                            	cursor_ = cursor_->getNext();    
-                    	}
-                    	
-                        // If add is negative, it is supposed to decrement
-                        for (int i = 0; i > add && cursor_ != nullptr; i--) {
-                                cursor_ = cursor_->getPrev();
-                        	}
-                    	return *this;
+                    	size_t neutral = std::abs(add);
+						for (size_t i = 0; i < neutral && this->cursor_ != nullptr; ++i) {
+							if (add < 0) {
+								--(*this);
+							} else if (add > 0) {
+								++(*this);
+							}
+						}
+						return *this;
                     }
                    
                     /**
@@ -308,14 +305,15 @@ namespace CPSC131::DoublyLinkedList
                      */
                     Iterator operator -=(int subtract)
                     {
-                         for (int i = 0; i < subtract && cursor_ != nullptr; i++) {
-                                cursor_ = cursor_->getPrev();
-                        	}
-                     	//If subtact is negative, it is supposed to decrement
-                        for (int i = 0; i > subtract && cursor_ != nullptr; i--) {
-                                cursor_ = cursor_->getNext();
-                        	}
-                    	return *this;
+                        size_t neutral = std::abs(subtract);
+						for (size_t i = 0; i < neutral && this->cursor_ != nullptr; ++i) {
+							if (subtract < 0) {
+								++(*this);
+							} else if (subtract > 0) {
+								--(*this);
+							}
+						}
+						return *this;
 
                     }
                    
@@ -348,29 +346,24 @@ namespace CPSC131::DoublyLinkedList
             };
            
             /// Default constructor
-            DoublyLinkedList()
-            {
-                head_ = nullptr;
-				tail_ = nullptr;
-				size_ = 0;
-            }
+            DoublyLinkedList() : head_(nullptr), tail_(nullptr), size_(0) {} 
            
             /// Copy Constructor
             DoublyLinkedList(const DoublyLinkedList& other)
             {
-             	clear();
              	Node* MJ = other.head_;
-             	while (MJ != other.tail_){
+             	while (MJ != nullptr){
              		push_back(MJ->getElement());
              		MJ = MJ->getNext();
-		}
-             	push_back(MJ->getElement());
+		            }
             }
            
             /// DTOR
             ~DoublyLinkedList()
             {
-               this->clear();
+               if(!empty()) {
+                 clear();
+               }
             }
            
             /**
@@ -387,12 +380,9 @@ namespace CPSC131::DoublyLinkedList
             void assign(size_t count, const T& value)
             {
                 this->clear();
-                
-                size_t Jared = 0;
-                while (Jared < count) {
-                	this->push_back(value);
-                	++Jared;
-                }
+				for (size_t jared = 0; jared < count; jared++) {
+					push_back(value);
+				}
                 
             }
            
@@ -432,13 +422,13 @@ namespace CPSC131::DoublyLinkedList
             /// Return a pointer to the head node, if any
             Node* head() const
             {
-                return head_;
+                return this->head_;
             }
            
             /// Return a pointer to the tail node, if any
             Node* tail() const
             {
-                return tail_;
+                return this->tail_;
             }
            
             /**
@@ -446,7 +436,7 @@ namespace CPSC131::DoublyLinkedList
              */
             Iterator begin() const
             {
-                return Iterator(head_, tail_, head_);
+                return Iterator(this->head_, this->tail_, this->head_);
             }
            
             /**
@@ -474,11 +464,7 @@ namespace CPSC131::DoublyLinkedList
              */
             bool empty() const
             {
-                if (head_ == nullptr) {
-                	return true;
-            	} else {
-                	return false;
-            	}
+                return size_ == 0;
             }
            
             /**
@@ -500,17 +486,9 @@ namespace CPSC131::DoublyLinkedList
              //IT'S ALWAYS CLEAR
             void clear()
             {
-               Node* Shaq = this->head_;
-               while (Shaq != tail_) {
-               		if (Shaq != nullptr) {
-               		Node* Kobe = Shaq->getNext();
-               		delete Shaq;
-               		Shaq = Kobe;  
-               		}	  
+               while (!empty()) {
+                pop_front();
                }
-               this->head_ = nullptr;
-	       this->tail_ = nullptr;
-	       size_ = 0;
 	       
             }
            
@@ -527,7 +505,7 @@ namespace CPSC131::DoublyLinkedList
              */
             Iterator insert_after(Iterator pos, const T& value)
             {
-                Node* insertedNode = pos.getCursor(); // This grabs the cursor of the pos iterator (or current position)
+                 Node* insertedNode = pos.getCursor(); // This grabs the cursor of the pos iterator (or current position)
                 
                 if (pos == end()) {
                 	return push_back(value);
@@ -560,7 +538,7 @@ namespace CPSC131::DoublyLinkedList
                 	
            	size_++;
            	return Iterator(head_, tail_, diffInsertedNode);
-           	}	
+                }	
             }
            
             /**
@@ -578,13 +556,13 @@ namespace CPSC131::DoublyLinkedList
             Iterator insert_after(size_t pos, const T& value)
             {
             if (pos >= size_) {
-		return push_back(value);
-	    }
+		        return push_back(value);
+	        }   
             
             Iterator LeBron = begin(); //Thank you professor you are the best and i think we should get an extension
             	
-            	for (size_t Anthony = 0; Anthony < pos; Anthony++) { //for count is less then position, iterator goes up
-            		LeBron++; // This then moves up the iterator
+            	for (size_t Anthony = 0; Anthony < pos; ++Anthony) { //for count is less then position, iterator goes up
+            		++LeBron; // This then moves up the iterator
             	} 
             	
             	return insert_after(LeBron, value); //Uses the iterator insert after         	
@@ -601,37 +579,41 @@ namespace CPSC131::DoublyLinkedList
              */
             Iterator erase(Iterator pos)
             {
-				Node* Kat = pos.getCursor();
-              	Node* Ant = pos.getCursor()->getNext();	//nextNode
-              	Node* Rud = pos.getCursor()->getPrev(); //prevNode
-              	       
-             if (Kat == this->head_) {
-					this->head_ = Ant;
+				//	TODO: Your code here
+				if (pos.isAtEnd()) {
+					throw std::range_error("this is an invalid node");
+				}
+				Node* tempNode = pos.getCursor();
+				Node* prevNode = pos.getCursor()->getPrev();
+				Node* nextNode = pos.getCursor()->getNext();
+
+				if (tempNode == this->head_) {
+					this->head_ = nextNode;
 					if (this->head_ != nullptr) {
-						Ant->setPrev(nullptr);
+						nextNode->setPrev(nullptr);
 					}
-					delete Kat;
+					delete tempNode;
 					this->size_--;
 					return Iterator(this->head_, this->tail_, this->head_);
 				}
 
-				if (Kat == this->tail_) {
-					this->head_ = Rud;
+				if (tempNode == this->tail_) {
+					this->head_ = prevNode;
 					if (this->tail_ != nullptr) {
-						Rud->setNext(nullptr);
+						prevNode->setNext(nullptr);
 					}
-					delete Kat;
+					delete tempNode;
 					this->size_--;
 					return end();
 				}
 
-				Ant->setPrev(Rud);
-				Rud->setNext(Ant);
+				nextNode->setPrev(prevNode);
+				prevNode->setNext(nextNode);
 				this->size_--;
-				delete Kat;
+				delete tempNode;
 	
-				return Iterator(head_, tail_, Kat);
-            }
+				return Iterator(head_, tail_, nextNode);
+			}
                
             /**
              * Add an element just after the one pointed to by the 'pos' iterator
@@ -639,31 +621,30 @@ namespace CPSC131::DoublyLinkedList
              * Should return an iterator pointing to the newly created node
              */
              
-             
             Iterator push_after(Iterator pos, const T& value)
             {
                if (head_ == nullptr) { //If the list is empty, insert during iterator and tail
                		return insert_after(last(), value);
                } else {
                		return insert_after(pos, value); //Inserts after the position and value 
-            	}
+                }
            }
             /**
              * Add a new element to the front of our list.
              */
             void push_front(const T& value)
             {
-                Node* newP = new Node(value);
-           	 
-            	if (head_ == nullptr) { //If empty, push front simply makes head and tail to the new value
-                	head_ = newP;
-                	tail_ = newP;
-            	} else {
-                	newP->setNext(head_); //This sets the new element's next to the head
-                	head_->setPrev(newP); // This sets the old head's prev to the new element
-                	head_ = newP; // This sets the head to the new element
-            	}
-            	size_++;
+                Node* temp = new Node(value);
+				
+				if (empty()) {
+					this->head_ = temp;
+					this->tail_ = temp;
+				} else {
+					temp->setNext(this->head_);
+					this->head_->setPrev(temp);
+					this->head_ = temp;
+				}
+				this->size_++;
 
             }
            
@@ -674,18 +655,17 @@ namespace CPSC131::DoublyLinkedList
              */
             Iterator push_back(const T& value)
             {
-                Node* newQ = new Node(value);
-           	 
-            	if (tail_ == nullptr) {
-                	head_ = newQ;
-                	tail_ = newQ;
-            	} else {
-                	newQ->setPrev(tail_);
-                	tail_->setNext(newQ);
-            	}
-            	tail_ = newQ;
-            	size_++;
-            	return Iterator(newQ, head_, tail_);
+                Node* temp = new Node(value);
+				if (empty()) {
+					this->head_ = temp;
+					this->tail_ = temp;
+				} else {
+					temp->setPrev(this->tail_);
+					this->tail_->setNext(temp);
+					this->tail_ = temp;
+				}
+				this->size_++;
+				return Iterator(head_, tail_, temp);
             }
            
             /**
@@ -695,22 +675,23 @@ namespace CPSC131::DoublyLinkedList
              */
             void pop_front()
             {
-                if (head_ == nullptr) {
+                if (empty()) {
                 	throw std::range_error("Ah Ah Ah! You can't delete what's already empty Silly Wabbit! ");
             	}
-           	 
-            	Node* poppedHead = head_;
+           	 				   
+   			    Node* poppedHead = head_;
             	head_ = head_->getNext();
             	if (head_ != nullptr) {
                 	head_->setPrev(nullptr);
-            	}
+            	} else {
             		tail_ = nullptr;
-           	 
+                }
             	delete poppedHead;
             	size_--;
             	
 
             }
+
            
             /**
              * Remove the node at the end of our list
@@ -719,24 +700,19 @@ namespace CPSC131::DoublyLinkedList
              */
             void pop_back()
             {
-                if (head_ == nullptr && tail_ == nullptr) {
+                if (empty()) {
                 	throw std::range_error("We went over this! What are you doing? C'mon! Do Better!");
             	}
            	 
-            	Node* poppedTail = tail_;
-           	 
-            	if (tail_ != nullptr) {
-                	tail_ = tail_->getPrev();
-            	}
-            	delete poppedTail;
-            	size_--;
-           	 
-            	if (size_ <= 0 && tail_== nullptr) {
-                	head_ = nullptr;
-            	}
+                Node* poppedTail = tail_;
+           	    tail_ = tail_->getPrev();
+                if (tail_ != nullptr){
+                    tail_->setNext(nullptr);
+                }
 
+                delete poppedTail;
+            	size_--;
             }
-           
             /**
              * Return a reference to the element at the front.
              *
@@ -778,7 +754,7 @@ namespace CPSC131::DoublyLinkedList
             	
             		Node* Abi = head_;
             		if (Abi != nullptr) {
-            		for (size_t count = 0; count < index; ++count) {
+            		for (size_t count = 0; count < index; count++) {
             			Abi = Abi->getNext();
             		}
            	}
@@ -800,6 +776,8 @@ namespace CPSC131::DoublyLinkedList
                 	reverseList.push_front(newFirst->getElement()); //We grab the head element, then push it front 
                 	newFirst = newFirst->getNext(); // Grab the next few elements, then push those to the front
             	}
+
+                clear();
            	 
             	head_ = reverseList.head_; //Replace the head with the temp list head
             	tail_ = reverseList.tail_; //Same as the top but with the tail
@@ -845,14 +823,15 @@ namespace CPSC131::DoublyLinkedList
              //13th Reason why.
             DoublyLinkedList<T>& operator =(DoublyLinkedList<T>& other)
             { 
-                clear();
-             	Node* KB = other.head_;
-             	while (KB != other.tail_){
-             		push_back(KB->getElement());
-             		KB = KB->getNext();
-		}
-             	push_back(KB->getElement());
-             	return *this;
+                if(this != &other){    
+                    this->clear();
+             	    Node* KB = other.head_;
+             	    while (KB != nullptr){
+             		    push_back(KB->getElement());
+             		    KB = KB->getNext();
+		                }
+                }
+                return *this;   
             }
            
             /**
@@ -902,9 +881,4 @@ namespace CPSC131::DoublyLinkedList
             size_t size_ = 0;
     };
 }
-
-
-
-
-
 #endif
