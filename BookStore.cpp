@@ -1,10 +1,3 @@
-
-/**
- * TODO: Implement all the BookStore methods below.
- * Note you'll have to remain inside the CPSC131::BookStore namespace.
- */
-
-//
 #include "BookStore.hpp"
 
 
@@ -27,19 +20,13 @@ namespace CPSC131::BookStore
 	/// Your welcome
 	BookStore::BookStore() {}
 	
-	///	Copy CTOR
-	BookStore::BookStore(const BookStore& other)
-	{
-		//	TODO: Your code here
-	}
-	
 	/**
 	 * Adjust the store's account balance
 	 * Should accept positive or negative adjustments
 	 */
 	void BookStore::adjustAccountBalance(int adjustment)
 	{
-		//	TODO: Your code here
+		account_balance_ += adjustment;
 	}
 	
 	/**
@@ -47,23 +34,26 @@ namespace CPSC131::BookStore
 	 */
 	int BookStore::getAccountBalance() const
 	{
-		//	TODO: Your code here
-		
-		return 0;
+		return account_balance_;
 	}
 	
 	/**
 	 * Find a book by its ISBN
 	 * 
-	 * Return this->book_list_.end() if the book isn't found.
+	 * Return this->bookList.end() if the book isn't found.
 	 * 
 	 * Return an interator pointing to the Book if it is found.
 	 */
 	DoublyLinkedList::DoublyLinkedList<Book>::Iterator BookStore::findBook(std::string isbn) const
 	{
-		//	TODO: Your code here
+		 
+		for (auto harryPotter = this->book_list_.begin(); harryPotter != this->book_list_.end(); ++harryPotter) { 
+			if ((*harryPotter).getIsbn() == isbn) { // If the ISBN matches with the isbn
+				return harryPotter; // Return the iterator since book was found
+			}
+		}
 		
-		return DoublyLinkedList::DoublyLinkedList<Book>::Iterator();
+		return this->book_list_.end(); //Return end if it's not found
 	}
 	
 	/**
@@ -73,9 +63,7 @@ namespace CPSC131::BookStore
 	 */
 	bool BookStore::bookExists(std::string isbn) const
 	{
-		//	TODO: Your code here
-		
-		return false;
+		return (findBook(isbn) != book_list_.end()); //Checks if the book list exists by making sure it doesn't equal to end
 	}
 	
 	/**
@@ -85,9 +73,13 @@ namespace CPSC131::BookStore
 	 */
 	size_t BookStore::getBookStockAvailable(std::string isbn) const
 	{
-		//	TODO: Your code here
+		auto book = findBook(isbn);
 		
-		return 0;
+		if (book == book_list_.end()) {
+			return 0;
+		} else {
+			return (*book).getStockAvailable();
+		}
 	}
 	
 	/**
@@ -97,9 +89,14 @@ namespace CPSC131::BookStore
 	 */
 	Book& BookStore::getBook(std::string isbn) const
 	{
-		//	TODO: Your code here
+	
+		auto TKAMB = findBook(isbn);
+		if (TKAMB != book_list_.end()) {
+			return (*TKAMB);
+		} else {
+			throw InsufficientInventory("Whoaaa there! Sorry this book doesn't exist here! Try your nearest B & N!");
+		}
 		
-		return *(new Book());
 	}
 	
 	/**
@@ -114,7 +111,19 @@ namespace CPSC131::BookStore
 	 */
 	void BookStore::purchaseInventory(const Book& book)
 	{
-		//	TODO: Your code here
+		
+		auto Metamorphosis = findBook(book.getIsbn());
+		
+		if (Metamorphosis != book_list_.end()){ 
+			account_balance_ -= (book.getPriceCents() * book.getStockAvailable());
+			(*Metamorphosis).adjustStockAvailable(book.getStockAvailable());
+			
+		} else {
+		
+			book_list_.push_back(book);
+			account_balance_ -= (book.getPriceCents() * book.getStockAvailable());
+		}
+		
 	}
 	
 	/**
@@ -132,7 +141,8 @@ namespace CPSC131::BookStore
 		size_t unit_count
 	)
 	{
-		//	TODO: Your code here
+		Book book (title, author, isbn, price_cents, unit_count);
+		purchaseInventory(book);
 	}
 	
 	/**
@@ -148,7 +158,13 @@ namespace CPSC131::BookStore
 	 */
 	void BookStore::printInventory() const
 	{
-		//	TODO: Your code here
+		std::cout << "*** Book Store Inventory ***" << std::endl;
+		
+		for (auto inventory = book_list_.begin(); inventory != book_list_.end(); inventory++) {
+			std::cout << "\"" << (*inventory).getTitle() <<"\", by " << (*inventory).getAuthor() << " [" 
+				  << (*inventory).getIsbn() << "] " << "(" << (*inventory).getStockAvailable() 
+				  << " in stock)" << std::endl;
+		}
 	}
 	
 	/**
@@ -163,9 +179,15 @@ namespace CPSC131::BookStore
 	 */
 	void BookStore::sellToCustomer(std::string isbn, size_t price_cents, size_t quantity)
 	{
-		//	TODO: Your code here
+		auto temp = findBook(isbn);
+		
+		if (temp == book_list_.end()) {
+			throw InsufficientInventory("Whoaaa there! Sorry this book doesn't exist here! Try your nearest B & N!");
+		} else {
+			Book &book = *temp;
+			sellToCustomer(book, price_cents, quantity);
+		}		
 	}
-	
 	/**
 	 * Sell a book to a customer!
 	 * 
@@ -178,13 +200,13 @@ namespace CPSC131::BookStore
 	 */
 	void BookStore::sellToCustomer(Book& book, size_t price_cents, size_t quantity)
 	{
-		//	TODO: Your code here
+		if (book.getStockAvailable() < quantity) { 
+			throw InsufficientInventory("Looks like you're gonna have to pirate that book! We don't have it!");
+		} else {
+			book.adjustStockAvailable(-(int)quantity);
+			adjustAccountBalance(price_cents * quantity);
+		}
+		
 	}
+	
 }
-
-
-
-
-
-
-
