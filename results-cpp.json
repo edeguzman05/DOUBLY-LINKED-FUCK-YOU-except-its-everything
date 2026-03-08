@@ -3,7 +3,7 @@
       {
          "name": "Instruction Count",
          "order": "asc",
-         "value": 3649772.0
+         "value": 3649816.0
       }
    ],
    "output": "*************************\n***** Tests Summary *****\n[List basics] 13 / 13 ==> 10 / 10\n[Assignment] 10 / 10 ==> 10 / 10\n[Iterators] 27 / 27 ==> 10 / 10\n[Insert/Push] 19 / 19 ==> 5 / 5\n[Erase] 3 / 3 ==> 5 / 5\n[Assign] 12 / 12 ==> 5 / 5\n[Pointer Stealing] 2 / 2 ==> 10 / 10\n[Accordion] 6 / 6 ==> 10 / 10\n[List reverse] 3 / 3 ==> 5 / 5\n[Stock/Sales] 18 / 18 ==> 14 / 14\n[Printing] 2 / 2 ==> 5 / 5\n[Memory Leaks] 11 / 11 ==> 5 / 5\n[Instruction Counter] 5 / 5 ==> 1 / 1\n\nRaw Total: 95 / 95 (100%)\nNormalized: 50 / 50\n",
@@ -85,7 +85,7 @@
       {
          "max_score": 1,
          "name": "Instruction Counter",
-         "output": "[Instruction Counter][Info] Setting fixed points possible to 5\n[Instruction Counter][Info] Running: Instruction Counter\n[Instruction Counter][Pass] Points 0 ==> 1 (1): Instruction Counter :: Award 1 points :: Did not catch exception\n[Instruction Counter][Info] Running: Trying to count instructions: Successfully counted instructions; Count is: 3649772\n[Instruction Counter][Pass] Points 1 ==> 5 (4): Trying to count instructions: Successfully counted instructions; Count is: 3649772 :: Award 4 points :: TRUE\n",
+         "output": "[Instruction Counter][Info] Setting fixed points possible to 5\n[Instruction Counter][Info] Running: Instruction Counter\n[Instruction Counter][Pass] Points 0 ==> 1 (1): Instruction Counter :: Award 1 points :: Did not catch exception\n[Instruction Counter][Info] Running: Trying to count instructions: Successfully counted instructions; Count is: 3649816\n[Instruction Counter][Pass] Points 1 ==> 5 (4): Trying to count instructions: Successfully counted instructions; Count is: 3649816 :: Award 4 points :: TRUE\n",
          "score": 1
       }
    ]
