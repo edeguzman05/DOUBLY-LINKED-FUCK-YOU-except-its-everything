@@ -352,7 +352,7 @@ namespace CPSC131::DoublyLinkedList
             DoublyLinkedList(const DoublyLinkedList& other)
             {
              	Node* MJ = other.head_;
-             	while (MJ != nullptr){
+             	while (MJ != nullptr) {
              		push_back(MJ->getElement());
              		MJ = MJ->getNext();
 		            }
@@ -511,7 +511,7 @@ namespace CPSC131::DoublyLinkedList
                 	return push_back(value);
                 }
                 
-                if (head_ == nullptr) { //This first case is when the list is empty
+                if (empty()) { //This first case is when the list is empty
                 	head_ = new Node(value); // This sets the head to the new value
                 	tail_ = head_; // This sets the tail to the head (since there is only one element
                 	size_++; //Size increases
@@ -623,7 +623,7 @@ namespace CPSC131::DoublyLinkedList
              
             Iterator push_after(Iterator pos, const T& value)
             {
-               if (head_ == nullptr) { //If the list is empty, insert during iterator and tail
+               if (empty()) { //If the list is empty, insert during iterator and tail
                		return insert_after(last(), value);
                } else {
                		return insert_after(pos, value); //Inserts after the position and value 
@@ -720,7 +720,7 @@ namespace CPSC131::DoublyLinkedList
              */
             T& front()
             {
-                if (head_ == nullptr) {
+                if (empty()) {
                 	throw std::range_error("Wow you really don't learn! It's empty! Nothing is there!");
             	}
             	return head_->getElement();
@@ -733,8 +733,8 @@ namespace CPSC131::DoublyLinkedList
              */
             T& back()
             {
-                if (head_ == nullptr) {
-                	throw std::range_error("Oh, you're starting to piss me off... you jackrabbit son of a [BLEEP]");
+                if (empty()) {
+                	throw std::range_error("Oh, you're starting to piss me off... you jackrabbit son of a bitch");
             	}
            	 
             	return tail_->getElement();
@@ -854,13 +854,13 @@ namespace CPSC131::DoublyLinkedList
                Node* Vincent = other.head_;
                
                while (Tam != nullptr && Vincent != nullptr) {
-			if (Tam->getElement() != Vincent->getElement()){
-			return false;
-			}
-			Tam = Tam->getNext();
-			Vincent = Vincent->getNext();
-		}
-		return true;
+			    if (Tam->getElement() != Vincent->getElement()){
+			        return false;
+			        }
+			        Tam = Tam->getNext();
+			        Vincent = Vincent->getNext();
+		            }
+		    return true;
             }
            
             /**
